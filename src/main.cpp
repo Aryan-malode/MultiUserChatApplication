@@ -5,8 +5,8 @@
 
 using namespace std;
 
-
-string getTime(){
+string getTime()
+{
     time_t now = time(0);
     string dt = ctime(&now);
     dt.pop_back();
@@ -18,7 +18,7 @@ int main()
     int choice;
     string username, password;
 
-    user* currentUser = nullptr;
+    user *currentUser = nullptr;
 
     // LOGIN / REGISTER
     while (currentUser == nullptr)
@@ -69,50 +69,62 @@ int main()
 
         switch (ch)
         {
-            case 1:
-                cout << "Enter room name: ";
-                getline(cin, roomName);
-                room = chatroom(roomName);
-                room.createRoom();
-                break;
+        case 1:
+            cout << "Enter room name: ";
+            getline(cin, roomName);
+            room = chatroom(roomName);
+            room.createRoom();
+            break;
 
-            case 2:
-                cout << "Enter room name: ";
-                getline(cin, roomName);
-                room = chatroom(roomName);
+        case 2:
+            cout << "Enter room name: ";
+            getline(cin, roomName);
+            room = chatroom(roomName);
 
-                if (room.roomExists())
-                    cout << "Joined successfully\n";
-                else
-                    cout << "Room does not exist\n";
-                break;
+            if (room.roomExists())
+                cout << "Joined successfully\n";
+            else
+                cout << "Room does not exist\n";
+            break;
 
-            case 3:
-                cout << "Enter message: ";
-                getline(cin, message);
+        case 3:
+            cout << "Enter message: ";
+            getline(cin, message);
 
-                {
-                    string formatted =
-                        "[" + getTime() + "] " +
-                        currentUser->getUsername() + ": " +
-                        message;
+            {
+                string formatted =
+                    "[" + getTime() + "] " +
+                    currentUser->getUsername() + ": " +
+                    message;
 
-                    room.addMessage(formatted);
-                }
-                break;
+                room.addMessage(formatted);
+            }
+            break;
 
-            case 4:
-                cout << "\n--- Chat History ---\n";
+        case 4:
+        {
+            char choice;
+            do
+            {
+                system("cls"); 
+
                 room.displayMessages();
-                break;
 
-            case 5:
-                cout << "Exiting...\n";
-                delete currentUser;
-                return 0;
+                cout << "\nPress R to refresh, Q to quit: ";
+                cin >> choice;
+                cin.ignore();
 
-            default:
-                cout << "Invalid choice\n";
+            } while (choice == 'R' || choice == 'r');
+
+            break;
+        }
+        case 5:
+            cout << "Exiting...\n";
+            delete currentUser;
+            return 0;
+
+        default:
+            cout << "Invalid choice\n";
         }
     }
 

@@ -26,11 +26,16 @@ void chatroom::displayMessages(){
     ifstream infile("./data/chats/" + roomname + ".txt");
 
     if(!infile){
-        cout << "Error: Chatroom does not exist.\n";
+        cout << "Room does not exist.\n";
         return;
     }
+
+    cout << "\n===== ROOM: " << roomname << " =====\n\n";
+
     string message;
     while(getline(infile, message)){
-        cout << message << endl;
+        cout << "  " << message << endl;
     }
+
+    cout << "\n-----------------------------\n";
 }
