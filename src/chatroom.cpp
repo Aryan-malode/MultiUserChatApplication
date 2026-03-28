@@ -24,6 +24,11 @@ void chatroom::addMessage(string formattedMessage){
 
 void chatroom::displayMessages(){
     ifstream infile("./data/chats/" + roomname + ".txt");
+
+    if(!infile){
+        cout << "Error: Chatroom does not exist.\n";
+        return;
+    }
     string message;
     while(getline(infile, message)){
         cout << message << endl;

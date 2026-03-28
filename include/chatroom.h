@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 #ifndef CHATROOM_H
 #define CHATROOM_H
 
