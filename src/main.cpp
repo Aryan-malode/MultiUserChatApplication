@@ -2,6 +2,7 @@
 #include "../include/user.h"
 #include <iostream>
 #include <ctime>
+#include <dirent.h>
 
 using namespace std;
 
@@ -20,7 +21,6 @@ int main()
 
     user *currentUser = nullptr;
 
-    // LOGIN / REGISTER
     while (currentUser == nullptr)
     {
         cout << "\n1. Register\n2. Login\nChoice: ";
@@ -51,47 +51,87 @@ int main()
         }
     }
 
-    int ch;
-    string roomName, message;
-    chatroom room("default");
-
     while (true)
     {
-        cout << "\n===== CHAT SYSTEM =====\n";
-        cout << "1. Create Room\n";
-        cout << "2. Join Room\n";
-        cout << "3. Send Message\n";
-        cout << "4. View Messages\n";
-        cout << "5. Exit\n";
-        cout << "Enter choice: ";
+        system("cls");
+
+        cout << "===== WELCOME TO CHAT SYSTEM =====\n";
+
+        cout << "\nAvailable Chat Rooms:\n";
+
+        DIR *dir;
+        struct dirent *entry;
+
+        dir = opendir("./data/chats");
+
+        if (dir != NULL)
+        {
+            while ((entry = readdir(dir)) != NULL)
+            {
+                string name = entry->d_name;
+
+                if (name == "." || name == "..") continue;
+
+                if (name.size() > 4)
+                    name = name.substr(0, name.size() - 4);
+
+                cout << "- " << name << endl;
+            }
+            closedir(dir);
+        }
+        else
+        {
+            cout << "No chat rooms found.\n";
+        }
+
+        cout << "\n1. Join Room\n2. Create Room\n3. Exit\nChoice: ";
+
+        int ch;
         cin >> ch;
         cin.ignore();
 
-        switch (ch)
+        string roomName;
+
+        if (ch == 1)
         {
-        case 1:
             cout << "Enter room name: ";
             getline(cin, roomName);
-            room = chatroom(roomName);
-            room.createRoom();
-            break;
-
-        case 2:
-            cout << "Enter room name: ";
+        }
+        else if (ch == 2)
+        {
+            cout << "Enter new room name: ";
             getline(cin, roomName);
-            room = chatroom(roomName);
 
-            if (room.roomExists())
-                cout << "Joined successfully\n";
-            else
-                cout << "Room does not exist\n";
-            break;
+            chatroom(roomName).createRoom();
+            continue;
+        }
+        else
+        {
+            cout << "Exiting...\n";
+            delete currentUser;
+            return 0;
+        }
 
-        case 3:
-            cout << "Enter message: ";
-            getline(cin, message);
+        chatroom room(roomName);
 
+        char option;
+        string message;
+
+        do {
+            system("cls");
+
+            room.displayMessages();
+
+            cout << "\n[S] Send  [R] Refresh  [Q] Quit\n";
+            cout << "Choice: ";
+            cin >> option;
+            cin.ignore();
+
+            if (option == 'S' || option == 's')
             {
+                cout << "Enter message: ";
+                getline(cin, message);
+
                 string formatted =
                     "[" + getTime() + "] " +
                     currentUser->getUsername() + ": " +
@@ -99,33 +139,8 @@ int main()
 
                 room.addMessage(formatted);
             }
-            break;
 
-        case 4:
-        {
-            char choice;
-            do
-            {
-                system("cls"); 
-
-                room.displayMessages();
-
-                cout << "\nPress R to refresh, Q to quit: ";
-                cin >> choice;
-                cin.ignore();
-
-            } while (choice == 'R' || choice == 'r');
-
-            break;
-        }
-        case 5:
-            cout << "Exiting...\n";
-            delete currentUser;
-            return 0;
-
-        default:
-            cout << "Invalid choice\n";
-        }
+        } while(option != 'Q' && option != 'q');
     }
 
     return 0;
